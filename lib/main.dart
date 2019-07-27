@@ -3,9 +3,9 @@ import 'package:intl/intl.dart';
 import './expenseservicedemoimpl.dart' show ExpenseService;
 import './expense.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(NapiBuxaApp());
 
-class MyApp extends StatelessWidget {
+class NapiBuxaApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -13,51 +13,40 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Personal Expenses'),
+      home: NapiBuxaHomePage(title: 'Personal Expenses'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+class NapiBuxaHomePage extends StatefulWidget {
+  NapiBuxaHomePage({Key key, this.title}) : super(key: key);
   final String title;
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _NapiBuxaHomePageState createState() => _NapiBuxaHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  //String amount;
-  //String description;
+class _NapiBuxaHomePageState extends State<NapiBuxaHomePage> {
   final amountCtrl = TextEditingController();
   final descriptionCtrl = TextEditingController();
-  bool isBusy = true;
+  Future<Iterable<Expense>> _expensesFuture;
   @override
   void initState() {
-    queryExpensesAsyncSetState(); //Set State is very here, too
+    _expensesFuture = ExpenseService.inst.queryExpensesAsync(user: "DEMO");
     super.initState();
   }
   void _addExpenseAsync() async {
-    // print(this.amount);
-    // print(this.description);
-    setState(()=> isBusy = true);
+    setState(()=>_expensesFuture = null);
     try {
       var e = Expense.auto(description: descriptionCtrl.text, amount: double.parse(amountCtrl.text));
       await ExpenseService.inst.addExpenseAsync(user: "DEMO",expense: e);
-      queryExpensesAsyncSetState();
+      setState(() {
+        _expensesFuture = ExpenseService.inst.queryExpensesAsync(user: "DEMO");
+      });
     } catch(error) {
-      print(error.toString());
-      setState(()=> isBusy = false);
+      setState(() {_expensesFuture = _throwError(error);});
     }
   }
-  Iterable<Expense> _expenses = {};
-  Future<void> queryExpensesAsyncSetState() async {
-    setState(()=> isBusy = true);
-    var queryResult = await ExpenseService.inst.queryExpensesAsync(user: "DEMO");
-    setState(() {
-      _expenses = queryResult;
-      isBusy = false;
-    });
-  } 
+  Future<Iterable<Expense>> _throwError(dynamic error) async {throw error;}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,7 +63,15 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Text("Graph"),
             ),
             _expenseTextInputFields(),
-            isBusy ? Center(child: CircularProgressIndicator(),) : _expenseList(),
+            FutureBuilder<Iterable<Expense>>(future: _expensesFuture,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                switch(snapshot.connectionState) {
+                  case ConnectionState.done:
+                    if(snapshot.hasError) return Text(snapshot.error.toString());
+                    return _expenseList(snapshot.data);
+                  default: return Center(child: CircularProgressIndicator(),);
+                }
+            },)
           ],
         ),
       ),
@@ -109,9 +106,9 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
 
-  Widget _expenseList() => Column(
+  Widget _expenseList(Iterable<Expense> expenses) => Column(
     children: <Widget>[
-      ..._expenses.map((e) => _expenseCard(e))
+      ...expenses.map((e) => _expenseCard(e))
     ]);
 
   Widget _expenseCard(Expense e) => Card(
