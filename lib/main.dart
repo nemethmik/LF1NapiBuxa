@@ -111,10 +111,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _expenseList() => Container(
     height: 300,
-    child: ListView(
-      children: <Widget>[
-        ..._expenses.map((e) => _expenseCard(e))
-      ]),
+    child: ListView.builder(
+      itemCount: _expenses.length, 
+      itemBuilder: (BuildContext context, int index) {
+        return _expenseCard(_expenses.toList()[index]);
+      },),
   );
 
   Widget _expenseCard(Expense e) => Card(
