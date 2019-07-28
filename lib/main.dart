@@ -58,12 +58,24 @@ class _MyHomePageState extends State<MyHomePage> {
       isBusy = false;
     });
   } 
+  void _expenseDetailsDialog(BuildContext context){
+    showModalBottomSheet(context: context, builder: (BuildContext context) {
+      return _expenseTextInputFields();
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: <Widget>[
+          IconButton(icon: Icon(Icons.add), 
+            onPressed: (){_expenseDetailsDialog(context);},)
+        ],
       ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add), 
+        onPressed: () {_expenseDetailsDialog(context);},),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -73,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
               color: Colors.blue,
               child: Text("Graph"),
             ),
-            _expenseTextInputFields(),
+            //_expenseTextInputFields(),
             isBusy ? Center(child: CircularProgressIndicator(),) : _expenseList(),
           ],
         ),
@@ -101,7 +113,10 @@ class _MyHomePageState extends State<MyHomePage> {
             FlatButton(
               textColor: Colors.purple,
               child: Text("Add"),
-              onPressed: _addExpenseAsync,
+              onPressed: (){
+                _addExpenseAsync();
+                Navigator.of(context).pop();//Close the modal dialog box
+              },
             )
           ],
         ),
