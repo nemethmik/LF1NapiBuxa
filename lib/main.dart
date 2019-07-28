@@ -109,10 +109,13 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
 
-  Widget _expenseList() => Column(
-    children: <Widget>[
-      ..._expenses.map((e) => _expenseCard(e))
-    ]);
+  Widget _expenseList() => Container(
+    height: 300,
+    child: ListView(
+      children: <Widget>[
+        ..._expenses.map((e) => _expenseCard(e))
+      ]),
+  );
 
   Widget _expenseCard(Expense e) => Card(
       //color: Colors.amber,
