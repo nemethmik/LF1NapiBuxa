@@ -92,12 +92,11 @@ class _MyHomePageState extends State<MyHomePage> {
             TextField(
               decoration: InputDecoration(labelText: "Description"),
               controller: descriptionCtrl,
-              //onChanged: (v){description = v;},
             ),
             TextField(
               decoration: InputDecoration(labelText: "Amount"),
               controller: amountCtrl,
-              //onChanged: (v) => amount = v,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
             ),
             FlatButton(
               textColor: Colors.purple,
@@ -124,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Container(
       margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       child: Text(
-        "\$${e.amount}",
+        "\$${e.amount.toStringAsFixed(2)}",
         style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.purple,
