@@ -92,8 +92,8 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add), 
         onPressed: _openExpenseDetailsDialog,),
-      body: SingleChildScrollView(
-        child: Column(
+      body:  
+        Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
@@ -101,7 +101,6 @@ class _MyHomePageState extends State<MyHomePage> {
             _isBusy ? Center(child: CircularProgressIndicator(),) : _expenseList(),
           ],
         ),
-      ),
     );
   }
   double _weeklyTotal = 0.0; //calculated by _lastWeekExpenseAmounts
@@ -157,104 +156,23 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
     );
-  // ------------------------------------------------------------------------------------ 
-  // Date Picker included in a  dialog box should be placed in a separate stateful widget 
-  // to get proper setState behavior
-  // ------------------------------------------------------------------------------------ 
-  // DateTime _pickedDate = DateTime.now();
-  // void _onDatePicked() {
-  //   showDatePicker(context: context, initialDate: DateTime.now(), 
-  //     firstDate: DateTime(DateTime.now().year), lastDate: DateTime.now(),
-  //   ).then((dateChosen){
-  //     setState(() {
-  //       _pickedDate = dateChosen;
-  //     }); 
-  //   });                    
-  // }
-  // Widget _expenseTextInputFields() => 
-  //   Card(
-  //     elevation: 5,
-  //     child: Container(
-  //       padding: EdgeInsets.all(10),
-  //       child: Column(
-  //         crossAxisAlignment: CrossAxisAlignment.end,
-  //         children: <Widget>[
-  //           TextField(
-  //             decoration: InputDecoration(labelText: "Description"),
-  //             controller: _descriptionCtrl,
-  //           ),
-  //           TextField(
-  //             decoration: InputDecoration(labelText: "Amount"),
-  //             controller: _amountCtrl,
-  //             keyboardType: TextInputType.numberWithOptions(decimal: true),
-  //           ),
-  //           Row(children: <Widget>[
-  //             Expanded(child: Text( _pickedDate == null ? "No Date" : DateFormat.yMd().format(_pickedDate))),
-  //             FlatButton(child: Text("Pick"),
-  //                 onPressed: _onDatePicked,
-  //                 textColor: Theme.of(context).primaryColor,)
-  //           ],),
-  //           RaisedButton(
-  //             textColor: Colors.purple,
-  //             child: Text("Add"),
-  //             onPressed: (){
-  //               _addExpenseAsync();
-  //               Navigator.of(context).pop();//Close the modal dialog box
-  //             },
-  //           )
-  //         ],
-  //       ),
-  //     ),
-  //   );
 
-  Widget _expenseList() =>  Container(
-    height: 300,
-    child: _expenses.isEmpty // Ternary conditional expression 
-    ? Column(children: <Widget>[
-        Text("No expenses",style: Theme.of(context).textTheme.title,),
-        SizedBox(height: 16,),
-        Image.asset("assets/images/waiting.png", height: 200,),
-    ],) 
-    : ListView.builder(
-      itemCount: _expenses.length, 
-      itemBuilder: (BuildContext context, int index) {
-        // return _expenseCard(_expenses.toList()[index]);
-        return _expenseTile(_expenses.toList()[index]);
+  Widget _expenseList() =>  _expenses.isEmpty // Ternary conditional expression 
+  ? Container(height: 300,child: Column(children: <Widget>[
+      Text("No expenses",style: Theme.of(context).textTheme.title,),
+      SizedBox(height: 16,),
+      Image.asset("assets/images/waiting.png", height: 200,),
+    ],),) 
+  : Expanded(child: 
+      ListView.builder(
+        shrinkWrap: true,
+        itemCount: _expenses.length, 
+        itemBuilder: (BuildContext context, int index) {
+          // return _expenseCard(_expenses.toList()[index]);
+          return _expenseTile(_expenses.toList()[index]);
       },),
-  );
+    );
 
-  // Use expense tile, instead
-  // Widget _expenseCard(Expense e) => Card(
-  //     //color: Colors.amber,
-  //     child: Row(children: <Widget>[
-  //   Container(
-  //     margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-  //     child: Text(
-  //       "\$${e.amount.toStringAsFixed(2)}",
-  //       style: TextStyle(
-  //           fontWeight: FontWeight.bold,
-  //           color: Theme.of(context).primaryColor,
-  //           fontSize: 20),
-  //     ),
-  //     decoration: BoxDecoration(
-  //         border: Border.all(color: Theme.of(context).primaryColor, width: 2)),
-  //     padding: EdgeInsets.all(10),
-  //   ),
-  //   Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: <Widget>[
-  //       Text(
-  //         e.description,
-  //         //style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-  //         style: Theme.of(context).textTheme.title,
-  //       ),
-  //       Text(
-  //         DateFormat.yMd().format(e.date),
-  //         style: TextStyle(color: Colors.grey),
-  //       )
-  //     ],
-  //   )
-  // ]));
 
   Widget _expenseTile(Expense e) => Card( elevation: 5,
     margin: EdgeInsets.all(4),
