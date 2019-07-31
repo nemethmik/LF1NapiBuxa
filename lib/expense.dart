@@ -6,6 +6,6 @@ class Expense {
   final double amount;
   final DateTime date;
   Expense({@required this.id, @required this.description, @required this.amount, @required this.date});
-  Expense.auto({@required this.description, @required this.amount}) : 
-    id  = DateTime.now().millisecondsSinceEpoch, date = DateTime.now();
+  Expense.auto({@required this.description, @required this.amount, @required this.date}) : 
+    id  = DateTime.now().millisecondsSinceEpoch;
 }

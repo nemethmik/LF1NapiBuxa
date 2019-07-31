@@ -4,8 +4,11 @@ import './iexpenseservice.dart';
 class _ExpenseServiceDemoImpl implements IExpenseService {
   final Map<int,Expense> _expenses = {};
   _ExpenseServiceDemoImpl(){
-    addExpenseAsync(expense: Expense(id: 1, date: DateTime.now(), description: "New shoe", amount: 100.5, ));
-    addExpenseAsync(expense: Expense(id: 2, date: DateTime.now(), description: "Sony A9", amount: 2000, ));
+    addExpenseAsync(expense: Expense(id: 1, date: DateTime.now(), description: "New shoe", amount: 10.5, ));
+    addExpenseAsync(expense: Expense(id: 2, date: DateTime.now(), description: "Sony A9 battery", amount: 20, ));
+    addExpenseAsync(expense: Expense(id: 3, date: DateTime.now().subtract(Duration(days: 1)), description: "Socks", amount: 32.7, ));
+    addExpenseAsync(expense: Expense(id: 4, date: DateTime.now().subtract(Duration(days: 3)), description: "Wine", amount: 20.89, ));
+    addExpenseAsync(expense: Expense(id: 5, date: DateTime.now().subtract(Duration(days: 7)), description: "Peanuts", amount: 15.8, ));
   }
   @override
   Future<Iterable<Expense>> queryExpensesAsync({String user, DateTime from, DateTime to}) async {
@@ -22,6 +25,11 @@ class _ExpenseServiceDemoImpl implements IExpenseService {
   @override
   Future<Expense> getExpenseByIdAsync(int id) async {
     return _expenses[id];
+  }
+  @override
+  Future deleteExpenseByIdAsync(int id) {
+    _expenses.remove(id);
+    return null;
   }
 }
 abstract class ExpenseService {
